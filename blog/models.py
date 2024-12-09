@@ -6,8 +6,8 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     body = models.TextField()
     class Meta:
-        verbose_name = 'Пост'
-        verbose_name_plural = 'Посты'
+        verbose_name = 'сообщение'
+        verbose_name_plural = 'сообщения'
 
     def __str__(self):
         return self.title

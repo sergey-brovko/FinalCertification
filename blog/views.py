@@ -9,10 +9,12 @@ from blog.models import Post
 
 
 def list_posts(request):
-    print(request.POST)
     if request.method == 'POST':
         if request.POST.get('search'):
-            posts = Post.objects.filter(title__icontains=request.POST['search'])
+            if request.POST.get('search').split('::')[0] == 'id':
+                posts = binary_search_by_id((list(Post.objects.all())), int(request.POST.get('search').split('::')[1]))
+            else:
+                posts = Post.objects.filter(title__icontains=request.POST['search'])
         else:
             posts = Post.objects.all()
         if request.POST.get('sort'):
