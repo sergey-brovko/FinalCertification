@@ -9,19 +9,17 @@ from blog.models import Post
 
 
 def list_posts(request):
-    if request.method == 'POST':
-        if request.POST.get('search'):
-            if request.POST.get('search').split('::')[0] == 'id':
-                posts = binary_search_by_id((list(Post.objects.all())), int(request.POST.get('search').split('::')[1]))
-            else:
-                posts = Post.objects.filter(title__icontains=request.POST['search'])
+    search_by = request.POST.get('search', '')
+    sort = request.POST.get('sort', None)
+    if search_by:
+        if search_by.split('::')[0] == 'id':
+            posts = binary_search_by_id((list(Post.objects.all())), int(search_by.split('::')[1]))
         else:
-            posts = Post.objects.all()
-        if request.POST.get('sort'):
-            posts = bubble_sort_by_title(posts) if request.POST.get('sort') == 'Заголовку' else posts
+            posts = Post.objects.filter(title__icontains=search_by)
     else:
         posts = Post.objects.all()
-    return render(request, 'blog/list_of_posts.html', {'posts':posts, 'search': request.POST.get('search') if request.POST.get('search') else ''})
+    posts = bubble_sort_by_title(posts) if sort == 'Заголовку' else posts
+    return render(request, 'blog/list_of_posts.html', {'posts':posts, 'search': search_by})
 
 def post_detail(request, post_id):
     post = Post.objects.get(pk=post_id)
